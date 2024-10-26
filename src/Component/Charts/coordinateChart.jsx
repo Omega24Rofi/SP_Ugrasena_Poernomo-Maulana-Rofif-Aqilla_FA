@@ -37,9 +37,10 @@ function CoordinateChart({ coordinates, time }) {
           line: { color: 'green' },
         }
       ]}
-      layout={{ title: 'Latitude, Longitude',
+      layout={{height : 300, title: 'Latitude, Longitude',
         xaxis: { title: 'Time (seconds)' },
-        yaxis: { title: 'Coordinates' }
+        yaxis: { title: 'Coordinates' },
+        margin: { l: 50, r: 0, t: 50, b: 50 }, 
        }}
     />
   );

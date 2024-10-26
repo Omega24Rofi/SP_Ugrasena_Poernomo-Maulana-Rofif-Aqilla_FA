@@ -53,10 +53,13 @@ function App() {
 
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.flyTo(currentCoordinate, mapRef.current.getZoom(), {
-        animate: true,
-        duration: 1, 
-      });
+      setTimeout(() => {
+        mapRef.current.flyTo(currentCoordinate, mapRef.current.getZoom(), {
+          animate: true,
+          duration: 1,
+        });
+        mapRef.current.invalidateSize();
+      }, 100);
     }
   }, [currentCoordinate]);
 
@@ -68,7 +71,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="w-full bg-primary flex justify-between align-middle h-[20%] py-3 px-4">
+      <header className="w-full bg-primary flex justify-between align-middle h-[20%] py-3 px-4 ">
         <img src="/images/gmat_logo.png" alt="gmat-logo" className='h-[7vh]' />
         <div className='text-white text-right'>
           <p> id : {teamid}</p>
@@ -76,28 +79,33 @@ function App() {
           {String(second).padStart(2, "0")}</p>
         </div>
       </header>
-      <main className='w-[100%] h-[100%] bg-cyan-500 p-8 grid-container'>
-        <div className='map bg-blue aspect-[16/9] text-right'>
-          <div className="descMap flex flex-row w-full justify-between">
-            <p className='font-bold'>GPS</p>
-            <div className="coordinate">
-              <p>Lat : {currentCoordinate[0]}</p>
-              <p>Lon : {currentCoordinate[1]}</p>
+      <main className='w-[100%] h-[100%] p-4 flex flex-row flex-wrap justify-center align-middle '>
+        <div className='flex flex-row w-full max-h-max h-[40vh] mb-10 gap-4 justify-center align-middle items-center'>
+          <div className='map bg-blue aspect-[4/3] text-right w-1/2 h-[100%]'>
+            <div className="descMap flex flex-row w-full justify-between">
+              <p className='font-bold'>GPS</p>
+              <div className="coordinate">
+                <p>Lat : {currentCoordinate[0]}</p>
+                <p>Lon : {currentCoordinate[1]}</p>
+              </div>
             </div>
+            <MapContainer className="w-[100%] h-[100%]" center={currentCoordinate} zoom={20} ref={mapRef}>
+              <TileLayer url='https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'></TileLayer>
+              <Marker position={currentCoordinate}>
+                <Popup>
+                  GMAT UGRASENA
+                </Popup>
+              </Marker>
+            </MapContainer>
           </div>
-          <MapContainer className="w-[100%] h-[100%]" center={currentCoordinate} zoom={20} ref={mapRef}>
-            <TileLayer url='https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'></TileLayer>
-            <Marker position={currentCoordinate}>
-              <Popup>
-                GMAT UGRASENA
-              </Popup>
-            </Marker>
-          </MapContainer>
+          <CoordinateChart className='coordinate h-full w-1/2' coordinates={currentCoordinate} time = {time}/>
         </div>
-          <CoordinateChart className='coordinate' coordinates={currentCoordinate} time = {time}/>
-          <DataChart className='voltage' data={data} color={'grey'} title={'Voltage'} time={time}/> 
-          <DataChart className='pressure' data={data} color={'purple'} title={'Pressure'} time={time}/> 
-          <DataChart className='altitude' data={data} color={'green'} title={'altitude'} time={time}/> 
+        <div className='flex flex-row  w-full gap-2 h-fit justify-between align-middle mt-6'>
+        <DataChart className='flex-1 h-full w-full' data={data} color={'grey'} title={'Voltage'} time={time}/> 
+          <DataChart className='flex-1 h-full w-full' data={data} color={'purple'} title={'Pressure'} time={time}/> 
+          <DataChart className='flex-1 h-full w-full' data={data} color={'green'} title={'altitude'} time={time}/> 
+        </div>
+
       </main>
     </div>
   );

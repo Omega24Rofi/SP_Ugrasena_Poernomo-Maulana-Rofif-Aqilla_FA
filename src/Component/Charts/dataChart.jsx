@@ -1,9 +1,10 @@
 import React from 'react'
 import Plot from 'react-plotly.js';
+import '../../App.css';
 
 function dataChart({data, color, title, time}) {
   return (
-    <Plot
+    <Plot className='w-1/3 h-full'
     data={[
       {
         x: time,
@@ -11,14 +12,19 @@ function dataChart({data, color, title, time}) {
         type: 'scatter',
         mode: 'lines+markers',
         marker: {color: color},
+        line: { shape: 'spline' },
         name : {title}
       }
     ]}
-    layout={ {width: 900, height:450, title: title,
+    layout={ {height: 250,title: title,
         xaxis: { title: 'Time (seconds)' },
-        yaxis: { title: title }
+        yaxis: { title: title },
+        margin: { l: 50, r: 0, t: 50, b: 50 }, 
     } }
-    className='w-auto'
+    config={{
+        displayModeBar: false, // Optional: Hide the toolbar for a cleaner look
+        responsive: true,
+      }}
   />
   )
 }
