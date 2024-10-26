@@ -6,6 +6,7 @@ import L from 'leaflet';
 import CoordinateChart from './Component/Charts/coordinateChart'
 import DataChart from './Component/Charts/dataChart'
 import Plot from 'react-plotly.js';
+import GmatComponent from './Component/gmat-be';
 
 function App() {
   // var for team id
@@ -108,6 +109,7 @@ function App() {
           <DataChart className='flex-1 h-full w-full' data={data} color={'green'} title={'altitude'} time={time}/> 
         </div>
       </main>
+      <GmatComponent/>
     </div>
   );
 }
