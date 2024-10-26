@@ -1,7 +1,11 @@
 import './App.css';
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useRef} from 'react';
+import L from 'leaflet';
+import CoordinateChart from './Component/Charts/coordinateChart'
+import DataChart from './Component/Charts/dataChart'
+import Plot from 'react-plotly.js';
 
 function App() {
   // var for team id
@@ -10,7 +14,26 @@ function App() {
   const [time, setTime] = useState(0);
   // var for coordinates
   const coordinates = [-7.783213, 110.367025];
+  const [currentCoordinate, setCoordinate] = useState(coordinates);
 
+  const mapRef = useRef();
+ 
+  // var for random data
+  const [data, setData] = useState({ x: [], y: [] });
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (data.x.length < 10) {
+        setData({
+          ...data,
+          x: [...data.x, i],
+          y: [...data.y, Math.random()],
+        });
+        setI(i + 1);
+      }
+    }, 1000);
+  }, [data, i]);
 
   // timer function
   useEffect(()=>{
@@ -21,7 +44,21 @@ function App() {
   },[]);
 
   // coordinates function
-  useEffect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCoordinate(([lat, lon]) => [lat + 0.00001, lon + 0.00001]);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.flyTo(currentCoordinate, mapRef.current.getZoom(), {
+        animate: true,
+        duration: 1, 
+      });
+    }
+  }, [currentCoordinate]);
 
   const hours = Math.floor(time/3600);
   const minute = Math.floor((time%3600)/60);
@@ -39,17 +76,28 @@ function App() {
           {String(second).padStart(2, "0")}</p>
         </div>
       </header>
-      <main className='grid grid-cols-3 gap-4 w-full h-[40%] bg-cyan-500 p-10'>
-        <div className='bg-blue aspect-[6/3] w-[100%]'>
-          <MapContainer className="w-[100%] h-[100%]" center={coordinates} zoom={20}>
+      <main className='w-[100%] h-[100%] bg-cyan-500 p-8 grid-container'>
+        <div className='map bg-blue aspect-[16/9] text-right'>
+          <div className="descMap flex flex-row w-full justify-between">
+            <p className='font-bold'>GPS</p>
+            <div className="coordinate">
+              <p>Lat : {currentCoordinate[0]}</p>
+              <p>Lon : {currentCoordinate[1]}</p>
+            </div>
+          </div>
+          <MapContainer className="w-[100%] h-[100%]" center={currentCoordinate} zoom={20} ref={mapRef}>
             <TileLayer url='https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'></TileLayer>
-            <Marker position={[-7.783213, 110.367025]}>
+            <Marker position={currentCoordinate}>
               <Popup>
-                halo
+                GMAT UGRASENA
               </Popup>
             </Marker>
           </MapContainer>
         </div>
+          <CoordinateChart className='coordinate' coordinates={currentCoordinate} time = {time}/>
+          <DataChart className='voltage' data={data} color={'grey'} title={'Voltage'} time={time}/> 
+          <DataChart className='pressure' data={data} color={'purple'} title={'Pressure'} time={time}/> 
+          <DataChart className='altitude' data={data} color={'green'} title={'altitude'} time={time}/> 
       </main>
     </div>
   );
