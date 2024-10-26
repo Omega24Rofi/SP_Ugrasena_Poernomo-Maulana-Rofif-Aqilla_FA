@@ -51,6 +51,8 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+
+  //map function
   useEffect(() => {
     if (mapRef.current) {
       setTimeout(() => {
@@ -105,7 +107,6 @@ function App() {
           <DataChart className='flex-1 h-full w-full' data={data} color={'purple'} title={'Pressure'} time={time}/> 
           <DataChart className='flex-1 h-full w-full' data={data} color={'green'} title={'altitude'} time={time}/> 
         </div>
-
       </main>
     </div>
   );

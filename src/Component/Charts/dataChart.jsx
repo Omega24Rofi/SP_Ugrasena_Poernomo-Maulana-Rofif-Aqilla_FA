@@ -22,7 +22,7 @@ function dataChart({data, color, title, time}) {
         margin: { l: 50, r: 0, t: 50, b: 50 }, 
     } }
     config={{
-        displayModeBar: false, // Optional: Hide the toolbar for a cleaner look
+        displayModeBar: false, 
         responsive: true,
       }}
   />
